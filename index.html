@@ -316,10 +316,12 @@ function Login({ onEntrar, onCancelar }) {
     e.preventDefault();
     setTestando(true); setMsg("");
     try {
-      const r = await fetch(`https://api.github.com/repos/${REPO}`, { headers: cabecalhos(t.trim()) });
-      const j = r.ok ? await r.json() : null;
-      if (j?.permissions?.push) onEntrar(t.trim());
-      else setMsg("Esse token não tem permissão de escrita no caixa. Confira o passo 3.");
+      // Gravação vazia de propósito: token com escrita recebe 422 (faltam campos), sem escrita recebe 403. Nada é gravado.
+      const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${ARQUIVO}`, {
+        method: "PUT", headers: { ...cabecalhos(t.trim()), "Content-Type": "application/json" }, body: "{}" });
+      if (r.status === 422) onEntrar(t.trim());
+      else if (r.status === 401) setMsg("Token inválido. Copie de novo, ele começa com github_pat_.");
+      else setMsg("Esse token só tem leitura. No passo 3, em Contents, troque para Read and write.");
     } catch { setMsg("Sem conexão com o GitHub. Tente de novo."); }
     setTestando(false);
   };
