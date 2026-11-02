@@ -54,6 +54,12 @@
      "pago": false,
      "valor": 20,
      "criadoEm": "2026-11-02T02:40:20.474Z"
+    },
+    "zc": {
+     "nome": "ZZTESTE_Concorrente A",
+     "pago": false,
+     "valor": 20,
+     "criadoEm": "2026-11-02T02:40:20.474Z"
     }
    }
   },
