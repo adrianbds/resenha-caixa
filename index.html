@@ -183,6 +183,8 @@ tr.ok .b-pago { background: transparent; color: var(--ok); box-shadow: inset 0 0
   .placar { padding: 18px 16px 14px; }
   .placar .n { font-size: 56px; }
   .lista .n, .lista .val, .lista .c-sit { display: none; }
+  .lista tr:not(:has(.ac)) td.jog { border-right: 1px solid var(--no-line); border-radius: 0 3px 3px 0; }
+  .lista tr.ok:not(:has(.ac)) td.jog { border-right-color: var(--ok-line); }
   .lista .jog small { display: block; margin-top: 3px; color: var(--no); }
   .lista tr.ok .jog small { color: var(--ok); }
   .b-pago { min-width: 76px; padding: 0 10px; }
