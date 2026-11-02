@@ -302,34 +302,43 @@ function Painel({ titulo, preco, idInput, itens, vazio, onAdd, admin, total }) {
   </section>`;
 }
 
+// Token de edição guardado cifrado (AES-GCM, chave tirada da senha). Sem a senha ele não serve para nada.
+const COFRE = {"salt":"tmbtfnYK08Mv/vDwcWhxkA==","iv":"dJJCZkjQysZDnKw1","ct":"2Mref+R7+6Ak8IKkgLBx8bXY99R6jaZ1ZbWJUHTBaUgXkcIbQ0mzUsW4SoUJV657DzSb9v7rdHozy0SoG/g1Zn3xQ71oHeII7YucrJXTJRjp4yPHpq8x+VPppi3r1JYzKybMd6AhIQj9sYV+cQ=="};
+
+async function abrirCofre(senha) {
+  const de64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(senha), "PBKDF2", false, ["deriveKey"]);
+  const chave = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: de64(COFRE.salt), iterations: 250000, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const claro = await crypto.subtle.decrypt({ name: "AES-GCM", iv: de64(COFRE.iv) }, chave, de64(COFRE.ct));
+  return new TextDecoder().decode(claro);
+}
+
 function Login({ onEntrar, onCancelar }) {
-  const [t, setT] = useState("");
+  const [senha, setSenha] = useState("");
   const [msg, setMsg] = useState("");
   const [testando, setTestando] = useState(false);
-  const testar = async (e) => {
+  const entrar = async (e) => {
     e.preventDefault();
     setTestando(true); setMsg("");
+    let token;
+    try { token = await abrirCofre(senha.trim().toLowerCase()); }
+    catch { setMsg("Senha errada. Confira com o Adrian."); setTestando(false); return; }
     try {
       // Gravação vazia de propósito: token com escrita recebe 422 (faltam campos), sem escrita recebe 403. Nada é gravado.
       const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${ARQUIVO}`, {
-        method: "PUT", headers: { ...cabecalhos(t.trim()), "Content-Type": "application/json" }, body: "{}" });
-      if (r.status === 422) onEntrar(t.trim());
-      else if (r.status === 401) setMsg("Token inválido. Copie de novo, ele começa com github_pat_.");
-      else setMsg("Esse token só tem leitura. Na linha do Contents, mude o Access de Read-only para Read and write.");
+        method: "PUT", headers: { ...cabecalhos(token), "Content-Type": "application/json" }, body: "{}" });
+      if (r.status === 422) onEntrar(token);
+      else setMsg("A senha está certa, mas o acesso de edição foi cancelado no GitHub. Avise o Adrian.");
     } catch { setMsg("Sem conexão com o GitHub. Tente de novo."); }
     setTestando(false);
   };
-  return html`<form class="login" onSubmit=${testar}>
+  return html`<form class="login" onSubmit=${entrar}>
     <h2>Entrar para editar</h2>
-    <ol>
-      <li>Abra <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> logado como <code>adrianbds</code>.</li>
-      <li>Dê um nome (ex.: <code>caixa resenha</code>) e em <b>Expiration</b> escolha <b>No expiration</b>.</li>
-      <li>Em <b>Repository access</b> marque <b>Only select repositories</b> → <code>resenha-caixa</code>. Em <b>Permissions</b> clique em <b>Add permissions</b> e marque <b>Contents</b>. Na linha do Contents que aparece, mude o <b>Access</b> de <b>Read-only</b> para <b>Read and write</b>.</li>
-      <li>Clique em <b>Generate token</b>, copie e cole aqui. Ele fica só neste aparelho.</li>
-    </ol>
+    <p class="info">Digite a senha do caixa. Ela fica lembrada neste aparelho.</p>
     <div class="linha">
-      <input id="token" type="password" placeholder="github_pat_..." value=${t} onInput=${(e) => setT(e.target.value)} autocomplete="off" />
-      <button class="entrar" type="submit" disabled=${!t.trim() || testando}>${testando ? "Conferindo…" : "Entrar"}</button>
+      <input id="senha" type="password" placeholder="Senha" value=${senha} onInput=${(e) => setSenha(e.target.value)} autocomplete="current-password" />
+      <button class="entrar" type="submit" disabled=${!senha.trim() || testando}>${testando ? "Conferindo…" : "Entrar"}</button>
       <button class="cancela" type="button" onClick=${onCancelar}>Cancelar</button>
     </div>
     ${msg && html`<div class="aviso">${msg}</div>`}
