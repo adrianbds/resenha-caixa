@@ -5,197 +5,177 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Caixa da Resenha</title>
 <meta name="description" content="Quem pagou o futebol da Resenha Jaguariúna: mensais e avulsos, mês a mês.">
-<meta name="theme-color" content="#0a0907">
+<meta name="theme-color" content="#0b0a08">
 <link rel="icon" href="logo.jpg">
 <link rel="stylesheet" href="fonts/fontes.css">
 <style>
-/* Súmula da Resenha: preto e dourado do escudo (tema único, de propósito).
-   Cabeçalho do clube, faixa de meses, placar, e duas súmulas (mensais e avulsos) com a linha inteira na cor da situação. */
+/* Layout: cabeçalho com o escudo, placar do mês, duas tabelas (mensais | avulsos) e o histórico. Visual preto e dourado do escudo, tema único. */
 :root {
   color-scheme: dark;
-  --bg: #0a0907;
-  --panel: #12100c;
-  --panel-2: #1a1712;
-  --rule: #2a251c;
-  --gold: #d4a944;
-  --gold-hi: #f0d27c;
-  --gold-lo: #8f6a22;
-  --ink: #efe9dc;
-  --muted: #8f8778;
-  --ok: #3ccf7e;
-  --ok-row: #0f2a1b;
-  --ok-line: #2b8f57;
-  --no: #ff5a4f;
-  --no-row: #2e1210;
-  --no-line: #a8352d;
-  --display: "Oswald", "Arial Narrow", "Roboto Condensed", sans-serif;
-  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --bg: #0b0a08;
+  --surface: #14120e;
+  --surface-2: #1b1813;
+  --line: #2c271d;
+  --line-gold: rgba(212, 170, 72, .35);
+  --fg: #f1ece1;
+  --muted: #9b9282;
+  --gold: #d6ad4c;
+  --gold-hi: #f3d784;
+  --gold-lo: #9c7428;
+  --pago: #4fd189;
+  --pago-bg: rgba(79, 209, 137, .16);
+  --deve: #ff5d52;
+  --deve-bg: rgba(255, 93, 82, .16);
+  --font-display: "Oswald", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
-  font-family: var(--body); font-size: 16px; line-height: 1.4;
-  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  margin: 0;
+  background: radial-gradient(1200px 500px at 50% -200px, rgba(214, 173, 76, .13), transparent 70%), var(--bg);
+  background-color: var(--bg);
+  color: var(--fg); font-family: var(--font-body); font-size: 15px; min-height: 100vh;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px));
 }
-button, input { font: inherit; color: inherit; }
+#app { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; text-transform: uppercase; }
+.num { font-variant-numeric: tabular-nums; }
+button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.num { font-variant-numeric: tabular-nums; }
-.wrap { max-width: 1140px; margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.ouro {
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold) 55%, var(--gold-lo));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
 
-/* Cabeçalho do clube */
-.clube { border-bottom: 1px solid var(--rule);
-  background: linear-gradient(180deg, #15120c 0%, var(--bg) 100%); }
-.clube .wrap { display: flex; align-items: center; gap: 20px; padding-block: 22px; flex-wrap: wrap; }
-.clube img { width: 92px; height: 92px; border-radius: 50%; flex: none; }
-.clube .nome { flex: 1; min-width: 200px; }
-.clube h1 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 38px; line-height: 1;
-  letter-spacing: .03em; text-transform: uppercase; color: var(--gold-hi);
-  background: linear-gradient(180deg, var(--gold-hi), var(--gold) 60%, var(--gold-lo));
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.clube .linha2 { margin-top: 8px; font-family: var(--display); font-size: 14px; letter-spacing: .28em;
-  text-transform: uppercase; color: var(--muted); }
-.acesso { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
-.acesso .modo { display: inline-flex; align-items: center; gap: 8px; }
+/* Cabeçalho */
+.topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;
+  padding-bottom: 20px; border-bottom: 1px solid var(--line-gold); }
+.marca { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.marca img { width: 84px; height: 84px; border-radius: 50%; box-shadow: 0 0 0 1px var(--line-gold), 0 10px 30px rgba(214, 173, 76, .18); flex: none; }
+.marca h1 { font-size: 34px; font-weight: 700; letter-spacing: .04em; line-height: 1; }
+.marca .sub { margin-top: 6px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.direita { display: grid; gap: 8px; justify-items: end; }
+.mes-nav { display: flex; align-items: center; gap: 6px; }
+.mes-nav button { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); font-size: 20px; color: var(--gold); }
+.mes-nav button:hover:not(:disabled) { border-color: var(--gold); }
+.mes-nav button:disabled { opacity: .3; cursor: default; }
+.mes-nav select { height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); padding: 0 12px;
+  font-family: var(--font-display); font-size: 17px; letter-spacing: .04em; text-transform: uppercase; color: var(--fg); }
+.acesso { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.acesso .modo { display: inline-flex; align-items: center; gap: 7px; }
 .acesso .modo::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
 .acesso .modo.admin::before { background: var(--gold); }
-.link-btn { background: none; border: 0; padding: 6px 0; color: var(--gold); font-weight: 600;
-  text-decoration: underline; text-underline-offset: 3px; }
-
-/* Faixa de meses */
-.meses { border-bottom: 1px solid var(--rule); }
-.meses .wrap { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
-.meses .wrap::-webkit-scrollbar { display: none; }
-.meses button { flex: none; background: none; border: 0; padding: 14px 16px 12px; border-bottom: 3px solid transparent;
-  font-family: var(--display); font-size: 16px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.meses button:hover { color: var(--ink); }
-.meses button[aria-current="true"] { color: var(--gold-hi); border-bottom-color: var(--gold); }
-.meses button small { display: block; font-size: 11px; letter-spacing: .12em; opacity: .7; }
-
-main.wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 34px; padding-block: 28px 56px; }
+.link-btn { background: none; border: 0; padding: 4px 0; color: var(--gold); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Placar */
-.placar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); min-width: 0; align-items: center; gap: 8px;
-  border: 1px solid var(--rule); background: var(--panel); padding: 22px 24px 18px; }
-.placar .lado { display: grid; gap: 2px; }
-.placar .lado.d { text-align: right; }
-.placar .rot { font-family: var(--display); font-size: 13px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
-.placar .n { font-family: var(--display); font-weight: 700; font-size: 72px; line-height: .95; }
-.placar .lado.p .n { color: var(--ok); } .placar .lado.d .n { color: var(--no); }
-.placar .x { font-family: var(--display); font-size: 34px; color: var(--gold); padding: 0 8px; }
-.placar .caixa { grid-column: 1 / -1; min-width: 0; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule);
-  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 20px; font-size: 15px; color: var(--muted); }
-.placar .caixa b { font-family: var(--display); font-weight: 600; font-size: 24px; color: var(--gold-hi); letter-spacing: .02em; }
-.placar .trilho { grid-column: 1 / -1; height: 4px; background: var(--panel-2); margin-top: 10px; }
-.placar .trilho i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold-lo), var(--gold-hi)); }
+.placar { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 1px; background: var(--line-gold);
+  border: 1px solid var(--line-gold); border-radius: 16px; overflow: hidden; }
+@media (max-width: 820px) { .placar { grid-template-columns: 1fr 1fr; } }
+.placar > div { background: var(--surface); padding: 18px 20px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.placar .rot { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.placar .val { font-family: var(--font-display); font-size: 30px; font-weight: 600; line-height: 1.1; }
+.placar .score { font-family: var(--font-display); font-size: 46px; font-weight: 700; line-height: 1; display: flex; align-items: baseline; gap: 12px; }
+.placar .score .p { color: var(--pago); } .placar .score .d { color: var(--deve); } .placar .score .x { color: var(--gold); font-size: 28px; }
+.barra { height: 6px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin-top: 4px; }
+.barra i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold-lo), var(--gold-hi)); border-radius: 99px; }
+.placar .det { font-size: 12px; color: var(--muted); }
 
-/* Busca e filtro */
-.ferramentas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; }
-.seg { display: inline-flex; border: 1px solid var(--rule); }
-.seg button { background: none; border: 0; padding: 9px 16px; font-family: var(--display); font-size: 14px;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.seg button + button { border-left: 1px solid var(--rule); }
-.seg button[aria-pressed="true"] { background: var(--gold); color: #17110a; }
-.busca { flex: 1 1 220px; min-width: 0; height: 40px; background: transparent; border: 0; border-bottom: 1px solid var(--rule);
-  padding: 0 2px; font-size: 16px; }
-.busca:focus { outline: none; border-bottom-color: var(--gold); }
-.busca::placeholder, .novo input::placeholder { color: var(--muted); }
+/* Filtros */
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 16px; font-weight: 600; font-size: 14px; color: var(--muted); }
+.chip:hover { color: var(--fg); }
+.chip[aria-pressed="true"] { background: var(--gold); color: #1a1408; border-color: var(--gold); }
+.filtros input { flex: 1 1 220px; min-width: 0; height: 38px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; background: var(--surface); }
+.filtros input::placeholder, .add input::placeholder { color: var(--muted); }
 
-/* Súmulas */
-.sumulas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 34px; align-items: start; }
-.sumula { min-width: 0; }
-.sumula-cab { display: flex; align-items: baseline; gap: 14px; margin-bottom: 10px; }
-.sumula-cab h2 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 28px; letter-spacing: .04em; text-transform: uppercase; }
-.sumula-cab .regua { flex: 1; height: 1px; background: linear-gradient(90deg, var(--gold-lo), transparent); align-self: center; }
-.sumula-cab .preco { font-family: var(--display); font-size: 16px; letter-spacing: .06em; color: var(--gold); white-space: nowrap; }
-.novo { display: flex; gap: 10px; margin-bottom: 8px; }
-.novo input { flex: 1; min-width: 0; height: 44px; background: var(--panel); border: 1px solid var(--rule); padding: 0 14px; font-size: 16px; }
-.novo input:focus { outline: none; border-color: var(--gold); }
-.novo button { height: 44px; padding: 0 18px; border: 0; background: var(--gold); color: #17110a;
-  font-family: var(--display); font-size: 15px; letter-spacing: .1em; text-transform: uppercase; }
-.novo button:disabled { opacity: .35; cursor: default; }
-
-table.lista { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
-.lista th { text-align: left; font-family: var(--display); font-weight: 500; font-size: 12px; letter-spacing: .2em;
-  text-transform: uppercase; color: var(--muted); padding: 6px 12px 0; }
-.lista td { padding: 12px; vertical-align: middle; background: var(--no-row);
-  border-top: 1px solid var(--no-line); border-bottom: 1px solid var(--no-line); }
-.lista td:first-child { border-left: 4px solid var(--no); border-radius: 3px 0 0 3px; }
-.lista td:last-child { border-right: 1px solid var(--no-line); border-radius: 0 3px 3px 0; }
-.lista tr.ok td { background: var(--ok-row); border-color: var(--ok-line); }
-.lista tr.ok td:first-child { border-left-color: var(--ok); }
-.lista .n { width: 1%; font-family: var(--display); font-size: 15px; color: var(--muted); text-align: right; padding-right: 4px; }
-.lista .jog { font-family: var(--display); font-weight: 500; font-size: 19px; letter-spacing: .03em; text-transform: uppercase;
-  color: #ffd9d5; overflow-wrap: anywhere; }
-.lista tr.ok .jog { color: #d3f7e2; }
-.lista .jog small { display: none; font-family: var(--body); font-size: 13px; letter-spacing: 0; text-transform: none; font-weight: 600; }
-.sit { font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--no); white-space: nowrap; }
-tr.ok .sit { color: var(--ok); }
-.sit span { display: block; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--muted); font-size: 13px; }
-.lista .val { text-align: right; white-space: nowrap; font-weight: 600; }
-.lista .ac { width: 1%; white-space: nowrap; text-align: right; }
-.b-pago { height: 36px; min-width: 88px; padding: 0 14px; border: 0; background: var(--no); color: #fff;
-  font-family: var(--display); font-size: 15px; letter-spacing: .12em; text-transform: uppercase; }
-.b-pago:hover { filter: brightness(1.1); }
-tr.ok .b-pago { background: transparent; color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok-line); }
-.b-tira { height: 36px; width: 32px; margin-left: 4px; border: 0; background: none; color: var(--muted); font-size: 16px; }
-.b-tira:hover { color: var(--no); }
-.pergunta { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
-.pergunta button { height: 34px; padding: 0 12px; border: 1px solid var(--rule); background: var(--panel-2); font-weight: 700; }
-.pergunta .sim { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.lista tfoot td { background: none; border: 0; border-radius: 0; padding: 10px 12px 0; font-size: 14px; color: var(--muted); }
-.lista tfoot td:first-child { border: 0; }
-.lista tfoot b { color: var(--gold-hi); font-family: var(--display); font-weight: 500; font-size: 17px; letter-spacing: .03em; }
-.vazio { border: 1px dashed var(--rule); padding: 26px 18px; text-align: center; color: var(--muted); }
+/* Tabelas */
+.tabelas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 22px; align-items: start; }
+.painel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; min-width: 0; display: flex; flex-direction: column; }
+.painel-cab { padding: 18px 18px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+  border-top: 2px solid var(--gold); }
+.painel-cab h2 { font-size: 24px; font-weight: 600; letter-spacing: .05em; }
+.preco { font-size: 13px; font-weight: 700; color: var(--gold); border: 1px solid var(--line-gold); border-radius: 999px; padding: 4px 12px; background: rgba(214, 173, 76, .06); }
+.add { display: flex; gap: 8px; padding: 0 18px 16px; }
+.add input { flex: 1; min-width: 0; height: 42px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; background: var(--bg); }
+.add input:focus { border-color: var(--gold); outline: none; }
+.add button { height: 42px; padding: 0 18px; border-radius: 10px; border: 0; font-weight: 700;
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold)); color: #1a1408; }
+.add button:disabled { opacity: .4; cursor: default; }
+.lista { list-style: none; margin: 0; padding: 14px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.lista li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px;
+  border: 1.5px solid var(--deve); background: var(--deve-bg); }
+.lista li.ok { border-color: var(--pago); background: var(--pago-bg); }
+.ava { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display);
+  font-size: 15px; font-weight: 600; letter-spacing: .03em; border: 1.5px solid var(--deve); color: var(--deve); background: var(--deve-bg); }
+.ava.ok { border-color: var(--pago); color: var(--pago); background: var(--pago-bg); }
+.quem { flex: 1; min-width: 0; }
+.quem .n { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; color: var(--deve); }
+.quem .n.ok { color: var(--pago); }
+.quem .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.acoes { display: flex; align-items: center; gap: 6px; flex: none; }
+.btn-pago { min-width: 96px; height: 36px; border-radius: 10px; font-weight: 700; font-size: 14px;
+  border: 1.5px solid var(--deve); background: transparent; color: var(--deve); }
+.btn-pago:hover { background: var(--deve-bg); }
+.btn-pago.ok { border-color: var(--pago); background: var(--pago-bg); color: var(--pago); }
+.btn-x { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); }
+.btn-x:hover { color: var(--deve); border-color: var(--deve); }
+.confirma { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); flex-wrap: wrap; justify-content: flex-end; }
+.confirma button { height: 34px; padding: 0 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface-2); font-weight: 700; }
+.confirma .sim { background: var(--deve); border-color: var(--deve); color: #fff; }
+.vazio { padding: 28px 18px; color: var(--muted); text-align: center; border-top: 1px solid var(--line); }
+.rodape { padding: 12px 18px; border-top: 1px solid var(--line); background: var(--surface-2);
+  display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+.rodape b { color: var(--gold); font-weight: 700; }
 
 /* Histórico */
-.hist h2 { margin: 0 0 10px; font-family: var(--display); font-weight: 600; font-size: 28px; letter-spacing: .04em; text-transform: uppercase; }
-.hist-rolar { overflow-x: auto; border-top: 2px solid var(--gold); }
-.hist table { width: 100%; min-width: 560px; border-collapse: collapse; }
-.hist th { text-align: left; font-family: var(--display); font-weight: 500; font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
-  color: var(--muted); padding: 12px; border-bottom: 1px solid var(--rule); }
-.hist td { padding: 13px 12px; border-bottom: 1px solid var(--rule); }
-.hist tbody tr { cursor: pointer; }
-.hist tbody tr:hover td { background: var(--panel); }
-.hist tr.atual td { background: var(--panel-2); }
-.hist .m { font-family: var(--display); font-size: 17px; letter-spacing: .06em; text-transform: uppercase; }
+.hist { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; min-width: 0; }
+.hist-wrap { overflow-x: auto; }
+.hist table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.hist th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); font-weight: 700;
+  padding: 10px 18px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.hist td { padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.hist tr:last-child td { border-bottom: 0; }
+.hist tr.click { cursor: pointer; }
+.hist tr.click:hover td { background: var(--surface-2); }
+.hist tr.atual td { background: rgba(214, 173, 76, .07); }
+.hist tr.atual td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
+.hist .mes { text-transform: capitalize; font-weight: 600; }
 
-/* Avisos e entrada do admin */
-.aviso { border-left: 4px solid var(--no); background: var(--no-row); padding: 12px 16px; font-weight: 600; }
-.aviso.info { border-left-color: var(--gold); background: var(--panel); color: var(--ink); font-weight: 500; }
-.rodape { color: var(--muted); font-size: 14px; text-align: center; }
-.login { border: 1px solid var(--rule); background: var(--panel); padding: 20px 22px; display: grid; gap: 12px; }
-.login h2 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 22px; letter-spacing: .05em; text-transform: uppercase; }
-.login ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--ink); }
+/* Avisos e login */
+.aviso { padding: 12px 16px; border-radius: 12px; background: var(--deve-bg); color: var(--deve); font-weight: 600; border: 1px solid rgba(255, 93, 82, .3); }
+.info { color: var(--muted); font-size: 13px; margin: 0; }
+.info.centro { text-align: center; }
+.login { background: var(--surface); border: 1px solid var(--line-gold); border-radius: 16px; padding: 20px; display: grid; gap: 12px; }
+.login h2 { font-size: 22px; font-weight: 600; letter-spacing: .05em; }
+.login ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; line-height: 1.5; }
 .login a { color: var(--gold-hi); }
-.login code { background: var(--panel-2); padding: 1px 6px; }
-.login .linha { display: flex; gap: 10px; flex-wrap: wrap; }
-.login input { flex: 1 1 260px; min-width: 0; height: 44px; background: var(--bg); border: 1px solid var(--rule); padding: 0 14px; }
-.login .ok { height: 44px; padding: 0 18px; border: 0; background: var(--gold); color: #17110a; font-family: var(--display); letter-spacing: .1em; text-transform: uppercase; }
-.login .cancela { height: 44px; padding: 0 16px; border: 1px solid var(--rule); background: none; }
+.login code { background: var(--surface-2); padding: 1px 6px; border-radius: 4px; }
+.login .linha { display: flex; gap: 8px; flex-wrap: wrap; }
+.login input { flex: 1 1 260px; min-width: 0; height: 42px; border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; background: var(--bg); }
+.login .entrar { height: 42px; padding: 0 18px; border-radius: 10px; border: 0; font-weight: 700; background: linear-gradient(180deg, var(--gold-hi), var(--gold)); color: #1a1408; }
+.login .entrar:disabled { opacity: .4; cursor: default; }
+.login .cancela { height: 42px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line); background: none; }
 
-@media (max-width: 600px) {
-  .clube img { width: 68px; height: 68px; }
-  .clube h1 { font-size: 28px; }
-  .clube .linha2 { font-size: 12px; letter-spacing: .2em; }
-  .placar { padding: 18px 16px 14px; }
-  .placar .n { font-size: 56px; }
-  .lista .n, .lista .val, .lista .c-sit { display: none; }
-  .lista tr:not(:has(.ac)) td.jog { border-right: 1px solid var(--no-line); border-radius: 0 3px 3px 0; }
-  .lista tr.ok:not(:has(.ac)) td.jog { border-right-color: var(--ok-line); }
-  .lista .jog small { display: block; margin-top: 3px; color: var(--no); }
-  .lista tr.ok .jog small { color: var(--ok); }
-  .b-pago { min-width: 76px; padding: 0 10px; }
+@media (max-width: 520px) {
+  .marca img { width: 64px; height: 64px; }
+  .marca h1 { font-size: 26px; }
+  .direita { justify-items: start; }
+  .placar .score { font-size: 38px; }
+  .placar .val { font-size: 24px; }
+  .btn-pago { min-width: 78px; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .lista td, .b-pago, .placar .trilho i { transition: background-color .18s, border-color .18s, color .18s, width .4s; }
+  .btn-pago, .chip, .ava, .quem .n, .lista li { transition: background .15s, color .15s, border-color .15s; }
+  .barra i { transition: width .4s ease; }
 }
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app"><p class="info">Carregando o caixa…</p></div>
 <script src="vendor/react.min.js"></script>
 <script src="vendor/react-dom.min.js"></script>
 <script src="vendor/htm.umd.js"></script>
@@ -215,10 +195,13 @@ const chaveMes = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
 const MES_ATUAL = chaveMes(new Date());
 const dataDoMes = (k) => { const [y, m] = k.split("-").map(Number); return new Date(y, m - 1, 1); };
 const nomeMes = (k) => dataDoMes(k).toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
-const mesCurto = (k) => dataDoMes(k).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "");
 const mesVizinho = (k, d) => { const x = dataDoMes(k); return chaveMes(new Date(x.getFullYear(), x.getMonth() + d, 1)); };
 const dataCurta = (iso) => iso ? new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) : "";
 const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const iniciais = (nome) => {
+  const p = nome.trim().split(/\s+/);
+  return ((p[0]?.[0] || "") + (p.length > 1 ? p[p.length - 1][0] : (p[0]?.[1] || ""))).toUpperCase();
+};
 
 const lerToken = () => { try { return localStorage.getItem(CHAVE_TOKEN) || ""; } catch { return ""; } };
 const salvarToken = (t) => { try { t ? localStorage.setItem(CHAVE_TOKEN, t) : localStorage.removeItem(CHAVE_TOKEN); } catch {} };
@@ -256,6 +239,7 @@ async function enviar(token, alterar, mensagem) {
 }
 
 // --- Regras do caixa ---
+// Mensalista aparece no mês se já tinha entrado e ainda não tinha saído (ou se pagou naquele mês).
 const ativoNoMes = (m, k, pagos) => (m.desde <= k && (!m.removidoEm || k < m.removidoEm)) || !!pagos[m.id];
 
 function resumoMes(k, mensalistas, docMes) {
@@ -266,45 +250,54 @@ function resumoMes(k, mensalistas, docMes) {
   const avPagos = avulsos.filter((a) => a.pago);
   const recebido = mensPagos.reduce((s, m) => s + (pagos[m.id].valor ?? VALOR_MENSAL), 0) + avPagos.reduce((s, a) => s + (a.valor ?? VALOR_AVULSO), 0);
   const pendente = (mens.length - mensPagos.length) * VALOR_MENSAL + avulsos.filter((a) => !a.pago).reduce((s, a) => s + (a.valor ?? VALOR_AVULSO), 0);
-  return { pagos: mensPagos.length + avPagos.length, devendo: mens.length - mensPagos.length + avulsos.length - avPagos.length, recebido, pendente };
+  return { pagos: mensPagos.length + avPagos.length, devendo: mens.length - mensPagos.length + avulsos.length - avPagos.length,
+    recebido, pendente, nMens: mens.length, nAv: avulsos.length };
 }
 
 // --- Componentes ---
-function Linha({ i, nome, pago, quando, valor, admin, onPagar, onDesfazer, onRemover }) {
-  const [perg, setPerg] = useState(null);
-  const sit = pago ? "Pago" : "Em aberto";
-  const detalhe = pago ? "em " + dataCurta(quando) : brl(valor);
-  let acao = null;
-  if (admin) {
-    if (perg) acao = html`<span class="pergunta">${perg === "desfazer" ? "Desfazer?" : "Tirar da lista?"}
-        <button class="sim" onClick=${() => { const p = perg; setPerg(null); p === "desfazer" ? onDesfazer() : onRemover(); }}>Sim</button>
-        <button onClick=${() => setPerg(null)}>Não</button></span>`;
-    else acao = html`<button class="b-pago" onClick=${() => pago ? setPerg("desfazer") : onPagar()}
-        aria-label=${pago ? `${nome} pagou; desfazer` : `Marcar ${nome} como pago`}>${pago ? "Pago ✓" : "Pago"}</button><button
-        class="b-tira" title="Tirar da lista" aria-label=${`Tirar ${nome} da lista`} onClick=${() => setPerg("remover")}>✕</button>`;
-  }
-  return html`<tr class=${pago ? "ok" : ""}>
-    <td class="n num">${String(i).padStart(2, "0")}</td>
-    <td class="jog">${nome}<small>${sit} · ${detalhe}</small></td>
-    <td class="c-sit"><div class="sit">${sit}<span>${detalhe}</span></div></td>
-    ${admin ? html`<td class="ac">${acao}</td>` : html`<td class="val num">${brl(valor)}</td>`}
-  </tr>`;
+function Confirma({ texto, onSim, onNao }) {
+  return html`<div class="confirma">${texto}
+    <button class="sim" onClick=${onSim}>Sim</button>
+    <button onClick=${onNao}>Não</button></div>`;
 }
 
-function Sumula({ titulo, preco, idInput, admin, linhas, vazio, onAdd, rodape }) {
+function Linha({ nome, sub, pago, admin, onPagar, onDesfazer, onRemover }) {
+  const [pergunta, setPergunta] = useState(null);
+  let acoes = null;
+  if (admin) {
+    if (pergunta === "desfazer") acoes = html`<${Confirma} texto="Desfazer?" onSim=${() => { setPergunta(null); onDesfazer(); }} onNao=${() => setPergunta(null)} />`;
+    else if (pergunta === "remover") acoes = html`<${Confirma} texto="Remover?" onSim=${() => { setPergunta(null); onRemover(); }} onNao=${() => setPergunta(null)} />`;
+    else acoes = html`<div class="acoes">
+      <button class=${"btn-pago" + (pago ? " ok" : "")} onClick=${() => pago ? setPergunta("desfazer") : onPagar()}
+        aria-label=${pago ? `${nome} pagou. Clique para desfazer` : `Marcar ${nome} como pago`}>${pago ? "Pago ✓" : "Pago"}</button>
+      <button class="btn-x" title="Remover" aria-label=${`Remover ${nome}`} onClick=${() => setPergunta("remover")}>✕</button>
+    </div>`;
+  }
+  return html`<li class=${pago ? "ok" : ""}>
+    <span class=${"ava" + (pago ? " ok" : "")} aria-hidden="true">${iniciais(nome)}</span>
+    <div class="quem"><div class=${"n" + (pago ? " ok" : "")}>${nome}</div><div class="s">${sub}</div></div>
+    ${acoes}
+  </li>`;
+}
+
+function Painel({ titulo, preco, idInput, itens, vazio, onAdd, admin, total }) {
   const [nome, setNome] = useState("");
-  const enviarNome = (e) => { e.preventDefault(); const n = nome.trim().replace(/\s+/g, " "); if (n) { onAdd(n); setNome(""); } };
-  return html`<section class="sumula">
-    <div class="sumula-cab"><h2>${titulo}</h2><span class="regua"></span><span class="preco num">${preco}</span></div>
-    ${admin && html`<form class="novo" onSubmit=${enviarNome}>
-      <input id=${idInput} placeholder="Nome do jogador" value=${nome} maxLength="40" autocomplete="off" onInput=${(e) => setNome(e.target.value)} />
-      <button type="submit" disabled=${!nome.trim()}>Adicionar</button></form>`}
-    ${linhas.length ? html`<table class="lista">
-        <thead><tr><th class="n">Nº</th><th>Jogador</th><th class="c-sit">Situação</th>${admin ? html`<th></th>` : html`<th class="val" style=${{ textAlign: "right" }}>Valor</th>`}</tr></thead>
-        <tbody>${linhas}</tbody>
-        <tfoot><tr><td colspan="4"><span class="num">${rodape.pagos} de ${rodape.n} pagaram</span> · recebido <b class="num">${brl(rodape.valor)}</b></td></tr></tfoot>
-      </table>`
-      : html`<div class="vazio">${vazio}</div>`}
+  const enviarNome = (e) => {
+    e.preventDefault();
+    const n = nome.trim().replace(/\s+/g, " ");
+    if (!n) return;
+    onAdd(n);
+    setNome("");
+  };
+  return html`<section class="painel">
+    <div class="painel-cab"><h2>${titulo}</h2><span class="preco num">${preco}</span></div>
+    ${admin && html`<form class="add" onSubmit=${enviarNome}>
+      <input id=${idInput} placeholder="Nome do jogador" value=${nome} maxLength="60"
+        onInput=${(e) => setNome(e.target.value)} autocomplete="off" />
+      <button type="submit" disabled=${!nome.trim()}>Adicionar</button>
+    </form>`}
+    ${itens.length ? html`<ul class="lista">${itens}</ul>` : html`<div class="vazio">${vazio}</div>`}
+    <div class="rodape num"><span>${total.pagos} de ${total.n} pagaram</span><b>${brl(total.valor)}</b></div>
   </section>`;
 }
 
@@ -321,7 +314,7 @@ function Login({ onEntrar, onCancelar }) {
         method: "PUT", headers: { ...cabecalhos(t.trim()), "Content-Type": "application/json" }, body: "{}" });
       if (r.status === 422) onEntrar(t.trim());
       else if (r.status === 401) setMsg("Token inválido. Copie de novo, ele começa com github_pat_.");
-      else setMsg("Esse token só tem leitura. No passo 3, em Contents, troque para Read and write.");
+      else setMsg("Esse token só tem leitura. Na linha do Contents, mude o Access de Read-only para Read and write.");
     } catch { setMsg("Sem conexão com o GitHub. Tente de novo."); }
     setTestando(false);
   };
@@ -330,12 +323,12 @@ function Login({ onEntrar, onCancelar }) {
     <ol>
       <li>Abra <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> logado como <code>adrianbds</code>.</li>
       <li>Dê um nome (ex.: <code>caixa resenha</code>) e em <b>Expiration</b> escolha <b>No expiration</b>.</li>
-      <li>Em <b>Repository access</b> marque <b>Only select repositories</b> → <code>resenha-caixa</code>. Em <b>Permissions → Contents</b> escolha <b>Read and write</b>.</li>
+      <li>Em <b>Repository access</b> marque <b>Only select repositories</b> → <code>resenha-caixa</code>. Em <b>Permissions</b> clique em <b>Add permissions</b> e marque <b>Contents</b>. Na linha do Contents que aparece, mude o <b>Access</b> de <b>Read-only</b> para <b>Read and write</b>.</li>
       <li>Clique em <b>Generate token</b>, copie e cole aqui. Ele fica só neste aparelho.</li>
     </ol>
     <div class="linha">
       <input id="token" type="password" placeholder="github_pat_..." value=${t} onInput=${(e) => setT(e.target.value)} autocomplete="off" />
-      <button class="ok" type="submit" disabled=${!t.trim() || testando}>${testando ? "Conferindo…" : "Entrar"}</button>
+      <button class="entrar" type="submit" disabled=${!t.trim() || testando}>${testando ? "Conferindo…" : "Entrar"}</button>
       <button class="cancela" type="button" onClick=${onCancelar}>Cancelar</button>
     </div>
     ${msg && html`<div class="aviso">${msg}</div>`}
@@ -366,10 +359,10 @@ function App() {
 
   useEffect(() => { recarregar(); }, [recarregar]);
   useEffect(() => {
-    const id = setInterval(() => { if (!document.hidden && salvandoRef.current === 0) recarregar(); }, 90000);
-    const vis = () => { if (!document.hidden && salvandoRef.current === 0) recarregar(); };
-    document.addEventListener("visibilitychange", vis);
-    return () => { clearInterval(id); document.removeEventListener("visibilitychange", vis); };
+    const atualizar = () => { if (!document.hidden && salvandoRef.current === 0) recarregar(); };
+    const id = setInterval(atualizar, 90000);
+    document.addEventListener("visibilitychange", atualizar);
+    return () => { clearInterval(id); document.removeEventListener("visibilitychange", atualizar); };
   }, [recarregar]);
 
   // Mostra a mudança na hora e grava no GitHub em seguida, uma por vez.
@@ -399,6 +392,7 @@ function App() {
   const listaMeses = useMemo(() => {
     const s = new Set([MES_ATUAL, ...Object.keys(meses)]);
     mensalistas.forEach((m) => m.desde && s.add(m.desde));
+    // Preenche os meses do meio, para o filtro não pular nenhum.
     const ord = [...s].filter((k) => k <= MES_ATUAL).sort();
     const tudo = [];
     for (let k = ord[0]; k <= MES_ATUAL; k = mesVizinho(k, 1)) tudo.push(k);
@@ -412,85 +406,98 @@ function App() {
   const esperado = r.recebido + r.pendente;
   const pct = esperado ? Math.round((r.recebido / esperado) * 100) : 0;
 
-  const cabecalho = html`<header class="clube"><div class="wrap">
-    <img src="logo.jpg" alt="Escudo da Resenha Jaguariúna" width="92" height="92" />
-    <div class="nome"><h1>Resenha Jaguariúna</h1><div class="linha2">Caixa do futebol</div></div>
-    <div class="acesso">
-      ${admin
-        ? html`<span class="modo admin">${salvando ? "Salvando…" : "Editando"}</span><button class="link-btn" onClick=${() => { salvarToken(""); setToken(""); }}>Sair</button>`
-        : html`<span class="modo">Só leitura</span><button class="link-btn" onClick=${() => setLoginAberto(true)}>Entrar para editar</button>`}
+  const cabecalho = html`<header class="topo">
+    <div class="marca">
+      <img src="logo.jpg" alt="Escudo da Resenha Jaguariúna" width="84" height="84" />
+      <div><h1 class="ouro">Resenha Jaguariúna</h1><div class="sub">Caixa do futebol</div></div>
     </div>
-  </div></header>`;
+    <div class="direita">
+      ${dados && html`<div class="mes-nav">
+        <button aria-label="Mês anterior" onClick=${() => setMes(mesVizinho(mes, -1))}>‹</button>
+        <select id="mes" aria-label="Escolher mês" value=${mes} onChange=${(e) => setMes(e.target.value)}>
+          ${(listaMeses.includes(mes) ? listaMeses : [mes, ...listaMeses]).map((k) => html`<option key=${k} value=${k}>${nomeMes(k)}</option>`)}
+        </select>
+        <button aria-label="Próximo mês" disabled=${mes >= MES_ATUAL} onClick=${() => setMes(mesVizinho(mes, 1))}>›</button>
+      </div>`}
+      <div class="acesso">
+        ${admin
+          ? html`<span class="modo admin">${salvando ? "Salvando…" : "Editando"}</span><button class="link-btn" onClick=${() => { salvarToken(""); setToken(""); }}>Sair</button>`
+          : html`<span class="modo">Só leitura</span><button class="link-btn" onClick=${() => setLoginAberto(true)}>Entrar para editar</button>`}
+      </div>
+    </div>
+  </header>`;
 
-  if (!dados) return html`${cabecalho}<main class="wrap">${erro ? html`<div class="aviso">${erro}</div>` : html`<p class="rodape">Carregando o caixa…</p>`}</main>`;
+  if (!dados) return html`${cabecalho}${erro ? html`<div class="aviso">${erro}</div>` : html`<p class="info">Carregando o caixa…</p>`}`;
 
-  return html`${cabecalho}
-  <nav class="meses" aria-label="Meses"><div class="wrap">
-    ${listaMeses.map((k) => html`<button key=${k} aria-current=${k === mes} onClick=${() => setMes(k)}>${mesCurto(k)}<small>${k.slice(0, 4)}</small></button>`)}
-  </div></nav>
-  <main class="wrap">
+  return html`
+    ${cabecalho}
     ${loginAberto && !admin && html`<${Login} onEntrar=${(t) => { salvarToken(t); setToken(t); setLoginAberto(false); }} onCancelar=${() => setLoginAberto(false)} />`}
     ${erro && html`<div class="aviso" role="alert">${erro}</div>`}
-    ${mes !== MES_ATUAL && html`<div class="aviso info">Você está vendo <b>${rotMes}</b>.${admin ? " Pagamento atrasado pode ser marcado aqui." : ""}</div>`}
+    ${mes !== MES_ATUAL && html`<p class="info">Vendo ${rotMes}.${admin ? " Dá para marcar pagamento atrasado aqui; o mês atual não muda." : ""}</p>`}
 
-    <section class="placar" aria-label=${"Placar de " + rotMes}>
-      <div class="lado p"><span class="rot">Pagaram</span><span class="n num">${String(r.pagos).padStart(2, "0")}</span></div>
-      <span class="x">×</span>
-      <div class="lado d"><span class="rot">Devendo</span><span class="n num">${String(r.devendo).padStart(2, "0")}</span></div>
-      <div class="trilho" role="progressbar" aria-valuenow=${pct} aria-valuemin="0" aria-valuemax="100"><i style=${{ width: pct + "%" }}></i></div>
-      <div class="caixa num"><span>Em caixa <b>${brl(r.recebido)}</b></span><span>Falta receber <b>${brl(r.pendente)}</b></span><span>${pct}% de ${brl(esperado)}</span></div>
+    <section class="placar" aria-label="Resumo do mês">
+      <div><span class="rot">Pagos × Devendo</span>
+        <div class="score num"><span class="p">${r.pagos}</span><span class="x">×</span><span class="d">${r.devendo}</span></div></div>
+      <div><span class="rot">Recebido</span><span class="val num ouro">${brl(r.recebido)}</span>
+        <div class="barra" role="progressbar" aria-valuenow=${pct} aria-valuemin="0" aria-valuemax="100"><i style=${{ width: pct + "%" }}></i></div>
+        <span class="det num">${pct}% do esperado</span></div>
+      <div><span class="rot">Falta receber</span><span class="val num">${brl(r.pendente)}</span>
+        <span class="det num">de ${brl(esperado)} no mês</span></div>
+      <div><span class="rot">Elenco do mês</span><span class="val num">${r.nMens + r.nAv}</span>
+        <span class="det num">${r.nMens} mensais · ${r.nAv} avulsos</span></div>
     </section>
 
-    <div class="ferramentas">
-      <div class="seg" role="group" aria-label="Mostrar">
-        ${[["todos", "Todos"], ["pagos", "Pagaram"], ["devendo", "Devendo"]].map(([v, t]) =>
-          html`<button key=${v} aria-pressed=${filtro === v} onClick=${() => setFiltro(v)}>${t}</button>`)}
-      </div>
-      <input class="busca" id="busca" type="search" placeholder="Procurar jogador" value=${busca} onInput=${(e) => setBusca(e.target.value)} />
+    <div class="filtros" role="group" aria-label="Filtrar">
+      ${[["todos", "Todos"], ["pagos", "Quem pagou"], ["devendo", "Quem deve"]].map(([v, t]) =>
+        html`<button key=${v} class="chip" aria-pressed=${filtro === v} onClick=${() => setFiltro(v)}>${t}</button>`)}
+      <input id="busca" type="search" placeholder="Buscar jogador" value=${busca} onInput=${(e) => setBusca(e.target.value)} />
     </div>
 
-    <div class="sumulas">
-      <${Sumula} titulo="Mensalistas" preco=${brl(VALOR_MENSAL) + " / mês"} idInput="novo-mensal" admin=${admin}
-        vazio=${admin ? "Nenhum mensalista ainda. Digite o nome acima." : "Nenhum mensalista neste mês."}
-        rodape=${{ n: mensDoMes.length, pagos: mensDoMes.filter((m) => pagosMensal[m.id]).length,
-                   valor: mensDoMes.filter((m) => pagosMensal[m.id]).reduce((s, m) => s + (pagosMensal[m.id].valor ?? VALOR_MENSAL), 0) }}
+    <div class="tabelas">
+      <${Painel} titulo="Mensais" preco=${brl(VALOR_MENSAL) + " / mês"} idInput="novo-mensal" admin=${admin}
+        vazio=${admin ? "Nenhum mensalista ainda. Digite o nome acima para adicionar." : "Nenhum mensalista neste mês."}
+        total=${{ pagos: mensDoMes.filter((m) => pagosMensal[m.id]).length, n: mensDoMes.length,
+                  valor: mensDoMes.filter((m) => pagosMensal[m.id]).reduce((s, m) => s + (pagosMensal[m.id].valor ?? VALOR_MENSAL), 0) }}
         onAdd=${(nome) => mudar((n) => { n.mensalistas[novoId()] = { nome, desde: mes, criadoEm: agora() }; }, `Novo mensalista: ${nome}`)}
-        linhas=${mensDoMes.filter((m) => passa(m.nome, !!pagosMensal[m.id])).map((m, i) => html`<${Linha} key=${m.id} i=${i + 1}
-          nome=${m.nome} pago=${!!pagosMensal[m.id]} quando=${pagosMensal[m.id]?.em} valor=${pagosMensal[m.id]?.valor ?? VALOR_MENSAL} admin=${admin}
+        itens=${mensDoMes.filter((m) => passa(m.nome, !!pagosMensal[m.id])).map((m) => html`<${Linha} key=${m.id}
+          nome=${m.nome} pago=${!!pagosMensal[m.id]} admin=${admin}
+          sub=${pagosMensal[m.id] ? "Pagou em " + dataCurta(pagosMensal[m.id].em) : "Pendente · " + brl(VALOR_MENSAL)}
           onPagar=${() => mudar((n) => { doMes(n).mensal[m.id] = { nome: m.nome, valor: VALOR_MENSAL, em: agora() }; }, `Pagou mensal: ${m.nome} (${rotMes})`)}
           onDesfazer=${() => mudar((n) => { delete doMes(n).mensal[m.id]; }, `Desfez mensal: ${m.nome} (${rotMes})`)}
           onRemover=${() => mudar((n) => { if (n.mensalistas[m.id]) n.mensalistas[m.id].removidoEm = mes; }, `Saiu dos mensalistas: ${m.nome} (${rotMes})`)} />`)} />
 
-      <${Sumula} titulo="Avulsos" preco=${brl(VALOR_AVULSO) + " / jogo"} idInput="novo-avulso" admin=${admin}
+      <${Painel} titulo="Avulsos" preco=${brl(VALOR_AVULSO) + " / jogo"} idInput="novo-avulso" admin=${admin}
         vazio=${admin ? "Nenhum avulso neste mês. Adicione o nome a cada jogo que a pessoa jogar." : "Nenhum avulso neste mês."}
-        rodape=${{ n: avDoMes.length, pagos: avDoMes.filter((a) => a.pago).length,
-                   valor: avDoMes.filter((a) => a.pago).reduce((s, a) => s + (a.valor ?? VALOR_AVULSO), 0) }}
+        total=${{ pagos: avDoMes.filter((a) => a.pago).length, n: avDoMes.length,
+                  valor: avDoMes.filter((a) => a.pago).reduce((s, a) => s + (a.valor ?? VALOR_AVULSO), 0) }}
         onAdd=${(nome) => mudar((n) => { doMes(n).avulsos[novoId()] = { nome, pago: false, valor: VALOR_AVULSO, criadoEm: agora() }; }, `Avulso: ${nome} (${rotMes})`)}
-        linhas=${avDoMes.filter((a) => passa(a.nome, !!a.pago)).map((a, i) => html`<${Linha} key=${a.id} i=${i + 1}
-          nome=${a.nome} pago=${!!a.pago} quando=${a.em} valor=${a.valor ?? VALOR_AVULSO} admin=${admin}
+        itens=${avDoMes.filter((a) => passa(a.nome, !!a.pago)).map((a) => html`<${Linha} key=${a.id}
+          nome=${a.nome} pago=${!!a.pago} admin=${admin}
+          sub=${(a.pago ? "Pagou em " + dataCurta(a.em) : "Pendente · " + brl(a.valor ?? VALOR_AVULSO)) + " · jogo de " + dataCurta(a.criadoEm)}
           onPagar=${() => mudar((n) => { const x = doMes(n).avulsos[a.id]; if (x) { x.pago = true; x.em = agora(); } }, `Pagou avulso: ${a.nome} (${rotMes})`)}
           onDesfazer=${() => mudar((n) => { const x = doMes(n).avulsos[a.id]; if (x) { x.pago = false; x.em = null; } }, `Desfez avulso: ${a.nome} (${rotMes})`)}
           onRemover=${() => mudar((n) => { delete doMes(n).avulsos[a.id]; }, `Tirou avulso: ${a.nome} (${rotMes})`)} />`)} />
     </div>
 
     <section class="hist">
-      <h2>Histórico</h2>
-      <div class="hist-rolar"><table>
-        <thead><tr><th>Mês</th><th>Pagaram</th><th>Devendo</th><th>Em caixa</th><th>Faltou</th></tr></thead>
+      <div class="painel-cab"><h2>Histórico</h2><span class="info">Clique num mês para abrir</span></div>
+      <div class="hist-wrap"><table>
+        <thead><tr><th>Mês</th><th>Pagos</th><th>Devendo</th><th>Recebido</th><th>Falta</th></tr></thead>
         <tbody>${listaMeses.map((k) => {
           const h = resumoMes(k, mensalistas, meses[k]);
-          return html`<tr key=${k} class=${k === mes ? "atual" : ""} tabIndex="0"
-            onClick=${() => { setMes(k); window.scrollTo({ top: 0, behavior: "smooth" }); }} onKeyDown=${(e) => e.key === "Enter" && setMes(k)}>
-            <td class="m">${nomeMes(k)}</td>
-            <td class="num" style=${{ color: "var(--ok)" }}>${h.pagos}</td>
-            <td class="num" style=${{ color: h.devendo ? "var(--no)" : "var(--muted)" }}>${h.devendo}</td>
-            <td class="num" style=${{ color: "var(--gold-hi)" }}>${brl(h.recebido)}</td>
+          return html`<tr key=${k} class=${"click" + (k === mes ? " atual" : "")} tabIndex="0"
+            onClick=${() => { setMes(k); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+            onKeyDown=${(e) => e.key === "Enter" && setMes(k)}>
+            <td class="mes">${nomeMes(k)}</td>
+            <td class="num" style=${{ color: "var(--pago)" }}>${h.pagos}</td>
+            <td class="num" style=${{ color: h.devendo ? "var(--deve)" : "var(--muted)" }}>${h.devendo}</td>
+            <td class="num" style=${{ color: "var(--gold)" }}>${brl(h.recebido)}</td>
             <td class="num">${brl(h.pendente)}</td></tr>`;
         })}</tbody>
       </table></div>
     </section>
-    <p class="rodape">Cada pagamento fica gravado no histórico do GitHub. Limpar o cache não apaga nada. Todo mês novo os mensalistas começam em aberto.</p>
-  </main>`;
+    <p class="info centro">Cada pagamento fica gravado no histórico do GitHub. Limpar o cache não apaga nada. Todo mês novo os mensais começam devendo.</p>
+  `;
 }
 
 ReactDOM.createRoot(document.getElementById("app")).render(html`<${App} />`);
